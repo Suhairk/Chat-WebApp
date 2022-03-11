@@ -1,0 +1,111 @@
+{% extends '../userTemplates/base.html' %}
+{% load crispy_forms_tags %}
+<link rel="stylesheet" href="/static/css/main.css">
+<!--This is for send and display Group chats-->
+
+{% block content %}
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+</head>
+<script>
+    setInterval(
+        function display(){
+            let section = ""
+            let req_name = '{{ request.user.username}}'    
+            fetch("/user/getMessages/{{group}}",
+            
+            ).then((res)=>res.json()
+                //console.log(res)
+            )
+            .then((data)=>{
+                //console.log(data)
+                $("#display").empty();
+                
+                for (var i in data.messages){
+                    if(data.messages[i].user_name == req_name){
+                        var temp="<div class='container ' style='border-radius: 1.5rem;width: 50px; text-align: right;background-color: #d9eae3;border: unset;height: 100%;border: 1px solid gray;/*!  */padding: .25rem;box-shadow: 1px 1px black;;margin-right: 40rem'><strong><p style='display: flex;margin: 10px; color:blue'>"+data.messages[i].user_name+"</p></strong><strong><p style='display: flex;margin: 10px;'>"+data.messages[i].message_text+"</p></strong></div><div class='margin'style='margin-bottom: 4px;margin-top: 4px'></div>"
+                        $("#display").append(temp);
+
+                    }
+                    else{
+                        //console.log("friend message")
+                        var temp="<div class='container' style='border-radius: 1.5rem;width: 50px;background-color: #d9eae3;border: unset;height: 100%;border: 1px solid gray;/*! */padding: .25rem;box-shadow: 1px 1px black;;margin-left: 30rem'><strong><p style='display: flex;margin: 10px; color:blue'>"+data.messages[i].user_name+"</p></strong><strong><p style='display: flex;margin: 10px;'>"+data.messages[i].message_text+"</p></strong></div><div class='margin'style='margin-bottom: 4px;margin-top: 4px'></div>"
+                        $("#display").append(temp);
+                    }
+                }
+               
+            });
+            
+        },500
+    );
+    
+</script>
+    
+<section class="message-view" style="background-color: unset;">
+    
+                <div class="section-title">
+                <li class="nav-item">
+                <a class="nav-link username-style" aria-current="page" href="">{{group}}</a>
+                </li> 
+
+                </div>
+            <button class="btn btn-primary m-5 p-5 " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" style="    background-color: cornflowerblue;
+            border: 2px solid cornflowerblue;
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-style: normal;
+            transition: 3s;
+            text-align: center;
+            justify-content: center">Group Members</button>
+
+            <div id="display"> 
+              <!--Message contents-->  
+            </div>
+
+          <form action="" method="POST" class="form-style">
+              {% csrf_token %}
+              <input type="hidden" name='username' id='username' value="{{request.user.username}}">
+              <input type="hidden" name='group_id' id='group_id' value="{{group_details.id}}">
+              <label for="message"></label>
+              <input type="text" name="messages" id="messages" style = "width: 500px">
+            <input type="button" id='button' value="Send" class="msg-btn" 
+            style=" width:500px;background-color: cornflowerblue;padding: 1rem;outline: none;border: 1px solid black;margin-top: 1rem;border-radius: 5px; font-size: 15px;
+            font-weight: bold">
+          </form>  
+
+    </div>
+
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+              <div class="offcanvas-header">
+                <h5 id="offcanvasRightLabel"></h5>
+                <button type="button" class="btn-close text-reset;"data-bs-dismiss="offcanvas" aria-label="Close"></button>
+              </div>
+              <div class="offcanvas-body">
+
+                
+                <div class="active-list" style="width: 30%;padding: 1rem;margin: 1rem;">
+        
+                <h2 style="display: block ruby;direction: inherit;margin-bottom: 1rem;"> Group Members </h2>
+
+                      {% for active in Activeusers %}
+                    <ul >         
+                    <li>
+                        <a style="text-decoration: none;
+                        list-style: none;
+                        font-size: 15px;
+                        display: flex;
+                        font-weight: bold;" href="{% url 'private_chat' request.user.username active %}">
+                        <i class="fa fa-user" aria-hidden="true"></i>&nbsp{{active}}</a>  
+                    </li>        
+                    </ul>
+                    {% endfor %}
+                </div>
+        
+              </div>  
+</section>
+
+
+<script type="text/javascript" src="/static/js/message_post.js"></script>
+
+
+{%endblock%}

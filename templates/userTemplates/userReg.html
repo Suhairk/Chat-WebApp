@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% extends './base.html' %}
+{% load crispy_forms_tags %}
+<link rel="stylesheet" href="/static/css/main.css">
+{% block content %}
+<div class="register">
+    <div class="section-title">
+        Sign up Here.
+    </div>
+    <form action="" method="POST" class="form-style">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="reg-button">SignUP</button>
+        <p class="log-link">Need to <a href="/login">Login</a></p>
+    </form>
+</div>
+
+<!--Form pip install django-crispy-forms-->
+
+
+{%endblock%}

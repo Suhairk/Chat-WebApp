@@ -1,0 +1,74 @@
+{% extends '../userTemplates/base.html' %}
+{% load crispy_forms_tags %}
+<link rel="stylesheet" href="/statics/css/main.css">
+<!--This is for send and display private chats-->
+{% block content %}
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+</head>
+
+<script>
+    setInterval(
+        function display(){
+            let section = ""
+            let req_id = '{{ request.user.id}}'
+    
+            fetch("/user/getPrivateMessages/{{sender}}/{{receiver}}",
+            
+            ).then((res)=>res.json()
+                //console.log(res)
+            )
+            .then((data)=>{
+               // console.log(data)
+                $("#display").empty();
+                for (var i in data.messages){
+                    if(data.messages[i].sender_id == req_id){
+                        var temp="<div class='container ' style='border-radius: 1.5rem;width: 50px; text-align: right;background-color: #d9eae3;border: unset;height: 100%;border: 1px solid gray;/*!  */padding: .25rem;box-shadow: 1px 1px black;;margin-right: 40rem'><strong><p style='display: flex;margin: 10px;'>"+data.messages[i].message_text+"</p></strong></div><div class='margin'style='margin-bottom: 4px;margin-top: 4px'></div>"
+                        $("#display").append(temp);
+
+                    }
+                    else{
+                        //console.log("friend message")
+                        var temp="<div class='container' style='border-radius: 1.5rem;width: 50px;background-color: #d9eae3;border: unset;height: 100%;border: 1px solid gray;/*! */padding: .25rem;box-shadow: 1px 1px black;;margin-left: 30rem'><strong><p style='display: flex;margin: 10px;'>"+data.messages[i].message_text+"</p></strong></div><div class='margin'style='margin-bottom: 2px;margin-top: 2px'></div>"
+                        $("#display").append(temp);
+                    }
+                }
+               
+            });
+            
+        },500
+    );
+    
+</script>
+<div class="message-section">
+    <div class="section-title">
+        <li class="nav-item">
+            <a class="nav-link username-style" aria-current="page" href="">{{receiver}}</a>
+        </li>
+        </div>
+
+
+    <div id="display">
+        
+     <!--Message contents-->  
+    </div>
+
+
+    <form action="" method="POST" class="form-style">
+        {% csrf_token %}
+        {% comment %} <input type="text" name='username' id='username' value="{{username}}"> {% endcomment %}
+       
+        <input type="hidden" name='sender' id='sender' value="{{sender}}">
+        <input type="hidden" name='receiver' id='receiver' value="{{receiver}}">
+        <label for="message"></label>
+        <input type="text" name="messages" id="messages" style = "width: 500px">
+        <input type="button" id='button' value="Send" class="msg-btn" 
+        style=" width:500px;background-color: cornflowerblue;padding: 1rem;outline: none;border: 1px solid black;margin-top: 1rem;border-radius: 5px; font-size: 15px;
+        font-weight: bold">
+    </form>
+</div>
+
+
+<script type="text/javascript" src="/static/js/post_private_msg.js"></script>
+
+
+{%endblock%}
