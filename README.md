@@ -1,6 +1,6 @@
 # Chat-WebApp
 Web App
-
+#screen shots are added in ./Screenshots
 user/ - user register, login and authentication
 user_chat/ - It include chat box , display messsages etc
 
